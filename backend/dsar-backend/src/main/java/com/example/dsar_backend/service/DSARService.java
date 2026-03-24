@@ -12,34 +12,40 @@ import java.util.List;
 @Service
 public class DSARService {
 
-    private final DSARRequestRepository requestRepository;
+    private final DSARRequestRepository dsarRequestRepository;
     private final AuditLogRepository auditLogRepository;
 
-    public DSARService(DSARRequestRepository requestRepository, AuditLogRepository auditLogRepository) {
-        this.requestRepository = requestRepository;
+    public DSARService(DSARRequestRepository dsarRequestRepository,
+                       AuditLogRepository auditLogRepository) {
+        this.dsarRequestRepository = dsarRequestRepository;
         this.auditLogRepository = auditLogRepository;
     }
 
     public DSARRequest createRequest(DSARRequest request, String username) {
         request.setStatus("SUBMITTED");
         request.setCreatedAt(LocalDateTime.now());
-        DSARRequest saved = requestRepository.save(request);
-        saveAudit("Created DSAR request", username);
+
+        DSARRequest saved = dsarRequestRepository.save(request);
+
+        saveAudit("Created request ID " + saved.getId(), username);
+
         return saved;
     }
 
     public List<DSARRequest> getAllRequests(String username) {
-        saveAudit("Viewed all DSAR requests", username);
-        return requestRepository.findAll();
+        saveAudit("Viewed all requests", username);
+        return dsarRequestRepository.findAll();
     }
 
     public DSARRequest updateStatus(Long id, String status, String username) {
-        DSARRequest request = requestRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
+        DSARRequest request = dsarRequestRepository.findById(id).orElseThrow();
 
         request.setStatus(status);
-        DSARRequest updated = requestRepository.save(request);
-        saveAudit("Updated DSAR request status to " + status, username);
+
+        DSARRequest updated = dsarRequestRepository.save(request);
+
+        saveAudit("Updated request " + id + " to " + status, username);
+
         return updated;
     }
 
@@ -50,9 +56,11 @@ public class DSARService {
 
     private void saveAudit(String action, String username) {
         AuditLog log = new AuditLog();
+
         log.setAction(action);
         log.setPerformedBy(username);
         log.setTimestamp(LocalDateTime.now());
+
         auditLogRepository.save(log);
     }
 }

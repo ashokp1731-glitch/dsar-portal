@@ -92,7 +92,7 @@ import api from "./services/api";
 export default {
   data() {
     return {
-      username: "customer",
+      username: "admin",
       password: "password",
       customerName: "",
       email: "",
@@ -160,7 +160,9 @@ export default {
         this.auditLogs = response.data;
         this.message = "Audit logs loaded successfully";
       } catch (error) {
-        this.message = "Failed to load audit logs";
+        this.message =
+          "Failed to load audit logs: " +
+          (error.response?.status || error.message);
       }
     }
   }
@@ -168,63 +170,129 @@ export default {
 </script>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  background: #f4f6f8;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  color: #1f2937;
+}
+
+#app {
+  width: 100%;
 }
 
 .container {
   max-width: 1100px;
-  margin: 20px auto;
+  margin: 30px auto;
   padding: 20px;
 }
 
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #111827;
+  font-size: 20px;
+}
+
 .section {
-  background: white;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+  background: #ffffff;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 input,
 select,
-textarea,
-button {
+textarea {
   display: block;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   margin: 10px 0;
-  padding: 10px;
+  padding: 12px 14px;
   font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
 }
 
 button {
-  width: auto;
+  margin-top: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 16px;
   background: white;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-table,
-th,
-td {
-  border: 1px solid #ccc;
+th {
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-weight: 700;
 }
 
 th,
 td {
-  padding: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
   text-align: left;
+  font-size: 14px;
+}
+
+tr:nth-child(even) {
+  background: #f9fafb;
 }
 
 .message {
-  font-weight: bold;
-  color: green;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #059669;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 14px;
+  }
+
+  .section {
+    padding: 16px;
+  }
+
+  th,
+  td {
+    font-size: 12px;
+    padding: 8px;
+  }
 }
 </style>
